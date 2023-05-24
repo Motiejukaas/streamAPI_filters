@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="411.0" prefWidth="564.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TableView fx:id="people_table" layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="538.0">
+        <columns>
+          <TableColumn fx:id="first_name" prefWidth="92.800048828125" text="First Name" />
+          <TableColumn fx:id="last_name" prefWidth="107.199951171875" text="Last Name" />
+            <TableColumn fx:id="email" prefWidth="107.199951171875" text="Email" />
+            <TableColumn fx:id="image_link" prefWidth="107.199951171875" text="Image Link" />
+            <TableColumn fx:id="ip_address" prefWidth="122.4000305175781" text="IP Address" />
+        </columns>
+      </TableView>
+      <TextField fx:id="frst_name_input" layoutX="14.0" layoutY="230.0" prefHeight="26.0" prefWidth="90.0" promptText="First Name" />
+      <TextField fx:id="image_link_input" layoutX="327.0" layoutY="230.0" prefHeight="26.0" prefWidth="98.0" promptText="Image LInk" />
+      <TextField fx:id="email_input" layoutX="208.0" layoutY="230.0" prefHeight="26.0" prefWidth="115.0" promptText="Email" />
+      <TextField fx:id="last_name_input" layoutX="107.0" layoutY="230.0" prefHeight="26.0" prefWidth="98.0" promptText="Last Name" />
+      <TextField fx:id="ip_address_input" layoutX="431.0" layoutY="230.0" prefHeight="26.0" prefWidth="123.0" promptText="IP Address" />
+      <Button fx:id="filter_data" layoutX="14.0" layoutY="333.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="90.0" text="Filter Data" />
+      <Button fx:id="reset_filter" layoutX="14.0" layoutY="368.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="90.0" text="Reset Filter" />
+      <Label fx:id="people_number" layoutX="113.0" layoutY="338.0" text="1000 people found" />
+      <RadioButton fx:id="regular_case" layoutX="14.0" layoutY="264.0" mnemonicParsing="false" selected="true" text="Regular case">
+         <toggleGroup>
+            <ToggleGroup fx:id="case_group" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="lower_case" layoutX="14.0" layoutY="284.0" mnemonicParsing="false" text="All lower case " toggleGroup="$case_group" />
+      <RadioButton fx:id="upper_case" layoutX="14.0" layoutY="305.0" mnemonicParsing="false" text="All upper case " toggleGroup="$case_group" />
+      <RadioButton fx:id="regular_order" layoutX="144.0" layoutY="263.0" mnemonicParsing="false" selected="true" text="Regular order">
+         <toggleGroup>
+            <ToggleGroup fx:id="order_group" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="descending_order" layoutX="144.0" layoutY="283.0" mnemonicParsing="false" text="Descending group" toggleGroup="$order_group" />
+      <RadioButton fx:id="ascending_order" layoutX="144.0" layoutY="304.0" mnemonicParsing="false" text="Ascending order" toggleGroup="$order_group" />
+   </children>
+</AnchorPane>
