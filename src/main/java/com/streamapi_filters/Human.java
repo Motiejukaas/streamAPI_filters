@@ -54,4 +54,15 @@ public class Human {
     public void setIp_address(String ip_address) {
         this.ip_address = ip_address;
     }
+
+    @Override
+    public String toString() {
+        return "Human {" +
+                "first_name = '" + first_name + '\'' +
+                ", last_name = '" + last_name + '\'' +
+                ", email = '" + email + '\'' +
+                ", image_link = '" + image_link + '\'' +
+                ", ip_address = '" + ip_address + '\'' +
+                '}';
+    }
 }

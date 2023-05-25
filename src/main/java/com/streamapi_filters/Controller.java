@@ -4,15 +4,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Comparator;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,10 @@ public class Controller implements Initializable {
 
     private ObservableList<Human> original_data_list;
 
+    private ObservableList<Human> filtered_data_list;
+
+    Map<String, List<Human>> map;
+
     @FXML
     void filterData() {
         String first_name = first_name_input.getText();
@@ -54,7 +60,6 @@ public class Controller implements Initializable {
         Predicate<Human> image_link_predicate = human -> human.getImage_link().toLowerCase().contains(image_link.toLowerCase());
         Predicate<Human> ip_address_predicate = human -> human.getIp_address().toLowerCase().contains(ip_address.toLowerCase());
 
-        ObservableList<Human> filtered_data_list;
 
         filtered_data_list = original_data_list
                 .stream()
@@ -122,6 +127,7 @@ public class Controller implements Initializable {
         String filename = "src\\main\\resources\\com\\streamapi_filters\\MOCK_DATA.csv";
         readData(filename);
         people_table.setItems(original_data_list);
+        filtered_data_list = original_data_list;
     }
 
     void readData(String filename) {
@@ -136,6 +142,43 @@ public class Controller implements Initializable {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void mapData() {
+        map = new HashMap<>();
+
+        for (Human data : filtered_data_list) {
+            String ip_address_current = data.getIp_address();
+            String key = ip_address_current.substring(0, ip_address_current.indexOf('.'));
+            List<Human> values = map.getOrDefault(key, new ArrayList<>());
+            values.add(data);
+            map.put(key, values);
+        }
+
+        ListView<String> listView = new ListView<>();
+        populateListView(listView);
+
+        VBox root = new VBox(listView);
+
+        Scene scene = new Scene(root, 1000, 400);
+        Stage map_stage = new Stage();
+        map_stage.setScene(scene);
+        map_stage.setTitle("Map Display");
+        map_stage.show();
+    }
+
+    private void populateListView(ListView<String> listView) {
+        String previous_key = "";
+        for (String key : map.keySet()) {
+            if (!previous_key.equals(key)) {
+                listView.getItems().add("Key: " + key);
+                previous_key = key;
+            }
+            List<Human> values = map.get(key);
+            for (Human value : values) {
+                listView.getItems().add("       Value: " + value.toString());
+            }
         }
     }
 }
