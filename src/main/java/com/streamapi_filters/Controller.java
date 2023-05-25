@@ -2,7 +2,6 @@ package com.streamapi_filters;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -16,7 +15,6 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Controller implements Initializable {
     @FXML
@@ -40,12 +38,10 @@ public class Controller implements Initializable {
     @FXML
     private Label people_number;
 
-    private String filename = "src\\main\\resources\\com\\streamapi_filters\\MOCK_DATA.csv";
-
     private ObservableList<Human> original_data_list;
 
     @FXML
-    void filterData(ActionEvent event) {
+    void filterData() {
         String first_name = first_name_input.getText();
         String last_name = last_name_input.getText();
         String email = email_input.getText();
@@ -58,7 +54,7 @@ public class Controller implements Initializable {
         Predicate<Human> image_link_predicate = human -> human.getImage_link().toLowerCase().contains(image_link.toLowerCase());
         Predicate<Human> ip_address_predicate = human -> human.getIp_address().toLowerCase().contains(ip_address.toLowerCase());
 
-        ObservableList<Human> filtered_data_list = FXCollections.observableArrayList(original_data_list);
+        ObservableList<Human> filtered_data_list;
 
         filtered_data_list = original_data_list
                 .stream()
@@ -102,7 +98,7 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    void resetFilter(ActionEvent event) {
+    void resetFilter() {
         first_name_input.setText("");
         last_name_input.setText("");
         email_input.setText("");
@@ -123,24 +119,17 @@ public class Controller implements Initializable {
         image_link.setCellValueFactory(new PropertyValueFactory<>("image_link"));
         ip_address.setCellValueFactory(new PropertyValueFactory<>("ip_address"));
 
+        String filename = "src\\main\\resources\\com\\streamapi_filters\\MOCK_DATA.csv";
         readData(filename);
         people_table.setItems(original_data_list);
     }
 
     void readData(String filename) {
-//        List<Human> records = new ArrayList<Human>();
-//        try (CSVReader csvReader = new CSVReader(new FileReader(filename))) {
-//            String[] values = null;
-//            while ((values = csvReader.readNext()) != null) {
-//                //records.add(Arrays.asList(values));
-//            }
-//        }
-
         original_data_list = FXCollections.observableArrayList();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
-            line = reader.readLine();
+            reader.readLine();
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(";");
                 original_data_list.add(new Human(data[0], data[1], data[2], data[3], data[4]));
