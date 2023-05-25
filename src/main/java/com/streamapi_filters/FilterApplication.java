@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+//@author Motiejus Šveikauskas
+
 public class FilterApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
