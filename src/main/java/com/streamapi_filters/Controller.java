@@ -2,6 +2,7 @@ package com.streamapi_filters;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -32,7 +33,7 @@ public class Controller implements Initializable {
     private TextField first_name_input, last_name_input, email_input, image_link_input, ip_address_input;
 
     @FXML
-    private Button filter_data, reset_filter;
+    private Button filter_data, reset_filter, show_map;
 
     @FXML
     private RadioButton regular_case, lower_case, upper_case;
@@ -58,7 +59,7 @@ public class Controller implements Initializable {
         Predicate<Human> last_name_predicate = human -> human.getLast_name().toLowerCase().contains(last_name.toLowerCase());
         Predicate<Human> email_predicate = human -> human.getEmail().toLowerCase().contains(email.toLowerCase());
         Predicate<Human> image_link_predicate = human -> human.getImage_link().toLowerCase().contains(image_link.toLowerCase());
-        Predicate<Human> ip_address_predicate = human -> human.getIp_address().toLowerCase().contains(ip_address.toLowerCase());
+        Predicate<Human> ip_address_predicate = human -> human.getIp_address().toLowerCase().startsWith(ip_address.toLowerCase());
 
 
         filtered_data_list = original_data_list
@@ -148,13 +149,21 @@ public class Controller implements Initializable {
     public void mapData() {
         map = new HashMap<>();
 
-        for (Human data : filtered_data_list) {
-            String ip_address_current = data.getIp_address();
-            String key = ip_address_current.substring(0, ip_address_current.indexOf('.'));
-            List<Human> values = map.getOrDefault(key, new ArrayList<>());
-            values.add(data);
-            map.put(key, values);
-        }
+//        for (Human data : filtered_data_list) {
+//            String ip_address_current = data.getIp_address();
+//            String key = ip_address_current.substring(0, ip_address_current.indexOf('.'));
+//            List<Human> values = map.getOrDefault(key, new ArrayList<>());
+//            values.add(data);
+//            map.put(key, values);
+//        }
+
+        filtered_data_list.stream()
+                .collect(Collectors.groupingBy(data -> data.getIp_address().substring(0, data.getIp_address().indexOf('.'))))
+                .forEach((key, values) -> map.merge(key, values, (list1, list2) -> {
+                    list1.addAll(list2);
+                    return list1;
+                }));
+
 
         ListView<String> listView = new ListView<>();
         populateListView(listView);
@@ -166,19 +175,52 @@ public class Controller implements Initializable {
         map_stage.setScene(scene);
         map_stage.setTitle("Map Display");
         map_stage.show();
+
+        show_map.setDisable(false);
+        people_table.getItems().clear();
     }
 
     private void populateListView(ListView<String> listView) {
-        String previous_key = "";
-        for (String key : map.keySet()) {
-            if (!previous_key.equals(key)) {
-                listView.getItems().add("Key: " + key);
-                previous_key = key;
-            }
-            List<Human> values = map.get(key);
-            for (Human value : values) {
-                listView.getItems().add("       Value: " + value.toString());
-            }
-        }
+            //String previous_key = "";
+
+        List<String> map_items = map.entrySet()
+                .stream()
+                .flatMap(entry -> {
+                    List<String> items = new ArrayList<>();
+                    String key = entry.getKey();
+                    String previous_key = "";
+                    if (!previous_key.equals(key)) {
+                        items.add("Key: " + key);
+                        previous_key = key;
+                    }
+                    List<Human> values = entry.getValue();
+                    values.stream()
+                            .map(value -> "       Value: " + value.toString())
+                            .forEach(items::add);
+                    return items.stream();
+                })
+                .toList();
+
+        listView.getItems().addAll(map_items);
+
+//        for (String key : map.keySet()) {
+//            if (!previous_key.equals(key)) {
+//                listView.getItems().add("Key: " + key);
+//                previous_key = key;
+//            }
+//            List<Human> values = map.get(key);
+//            for (Human value : values) {
+//                listView.getItems().add("       Value: " + value.toString());
+//            }
+//        }
+    }
+
+    public void showMap() {
+        ObservableList<Human> map_list = map
+                .values()
+                .stream()
+                .flatMap(List::stream)
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+        people_table.setItems(map_list);
     }
 }
